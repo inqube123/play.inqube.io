@@ -1,3 +1,4 @@
+let canvas;
 let tiles = [];
 let patterns = [];
 let cols = 10;
@@ -8,7 +9,9 @@ let particles = [], powerUps = [];
 let gameOver = false;
 
 function setup() {
-  createCanvas(windowWidth, windowHeight - 90);
+  canvas = createCanvas(windowWidth * 0.5, windowHeight - 120);
+  canvas.parent(document.body);
+  canvas.position((windowWidth - width) / 2, 120);
   tileW = width / cols;
   paddle = { w: 120, h: 12, y: height - 40 };
   ball = { x: width / 2, y: height / 2, r: 10, dx: 6, dy: -6 };
