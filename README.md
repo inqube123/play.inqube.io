@@ -1,5 +1,3 @@
-# play.inqube.io
-
 🚀 Welcome to **Tile Blaster**, a futuristic browser-based game developed by Inqube Labs.
 
 🎮 **Game Highlights**:
