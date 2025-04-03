@@ -7,10 +7,10 @@ body {
   overflow: hidden;
 }
 #title {
-  font-size: 2.5rem;
-  margin: 10px 0;
-  color: #b388ff;
-  text-shadow: 0 0 15px #b388ff, 0 0 40px #9e9eff;
+  font-size: 2.8rem;
+  margin: 12px 0 4px;
+  color: #ffffff;
+  text-shadow: 0 0 15px #b388ff, 0 0 30px #9e9eff;
 }
 #hud {
   display: flex;
@@ -40,24 +40,28 @@ button:hover {
   background: #9e9eff;
   box-shadow: 0 0 10px #b388ff;
 }
-canvas {
+#canvas-wrapper canvas {
   display: block;
   margin: auto;
-  border-radius: 12px;
+  border-radius: 20px;
+  border: 3px solid #b388ff;
+  box-shadow: 0 0 25px #b388ff33;
 }
 #overlay {
   display: none;
   position: fixed;
   top: 0; left: 0;
   width: 100%; height: 100%;
-  background: rgba(0,0,0,0.8);
+  background: rgba(0,0,0,0.85);
   color: white;
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  font-size: 2rem;
 }
-#overlay button {
-  margin-top: 20px;
-  font-size: 1rem;
+#overlay .big-text {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+  color: #fff;
+  font-family: 'Space Grotesk', sans-serif;
+  text-shadow: 0 0 10px #b388ff, 0 0 30px #9e9eff;
 }

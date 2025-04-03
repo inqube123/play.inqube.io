@@ -4,22 +4,25 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Tile Blaster</title>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <h1 id="title">⚡ Tile Blaster ⚡</h1>
+  <h1 id="title">⚡ <span style="color:#b388ff">Tile</span> Blaster ⚡</h1>
   <div id="hud">
     <span class="hud-block">Score: <span id="score">0</span></span>
     <span class="hud-block">Level: <span id="level">1</span></span>
-    <button onclick="toggleAI()">🤖 Toggle AI</button>
+    <span class="hud-block">Lives: <span id="lives">❤️ 3</span></span>
+    <button onclick="toggleAI()">🤖 Bot</button>
     <button onclick="togglePause()">⏸️ Pause</button>
   </div>
   <div id="overlay">
-    <div id="message"></div>
+    <div id="message" class="big-text"></div>
     <button onclick="restartGame()">🔁 Restart</button>
   </div>
-  <script src="https://cdn.jsdelivr.net/npm/p5@1.6.0/lib/p5.min.js"></script>
-  <script src="game.js"></script>
+  <div id="canvas-wrapper">
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.6.0/lib/p5.min.js"></script>
+    <script src="game.js"></script>
+  </div>
 </body>
 </html>

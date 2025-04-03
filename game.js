@@ -1,22 +1,29 @@
-let canvas;
+
 let tiles = [];
 let patterns = [];
 let cols = 10;
 let rows = 5;
 let tileW, tileH = 30;
 let paddle, ball, score = 0, level = 1, aiMode = false, paused = false;
-let particles = [], powerUps = [];
+let particles = [], powerUps = [], effects = [];
 let gameOver = false;
+let lives = 3;
+let canvas;
 
 function setup() {
   canvas = createCanvas(windowWidth * 0.5, windowHeight - 120);
   canvas.parent(document.body);
   canvas.position((windowWidth - width) / 2, 120);
+
+  paused = false;
+  loop();
+
   tileW = width / cols;
   paddle = { w: 120, h: 12, y: height - 40 };
   ball = { x: width / 2, y: height / 2, r: 10, dx: 6, dy: -6 };
   createPatterns();
   generateLevel();
+  updateLivesDisplay();
 }
 
 function createPatterns() {
@@ -63,6 +70,7 @@ function draw() {
   drawPowerUps();
   drawPaddle();
   drawBall();
+  drawEffects();
   moveBall();
 }
 
@@ -118,6 +126,16 @@ function drawPowerUps() {
   });
 }
 
+function drawEffects() {
+  for (let e of effects) {
+    fill(255, 100, 255, e.alpha);
+    ellipse(e.x, e.y, e.size);
+    e.size += 1;
+    e.alpha -= 5;
+  }
+  effects = effects.filter(e => e.alpha > 0);
+}
+
 function moveBall() {
   ball.x += ball.dx;
   ball.y += ball.dy;
@@ -136,10 +154,10 @@ function moveBall() {
   for (let t of tiles) {
     if (t.alive &&
         ball.x > t.x && ball.x < t.x + t.w &&
-        ball.y - ball.r < t.y + t.h &&
-        ball.y + ball.r > t.y) {
+        ball.y > t.y && ball.y < t.y + t.h) {
       t.alive = false;
       if (random(1) < 0.1) powerUps.push({ x: ball.x, y: ball.y });
+      effects.push({ x: ball.x, y: ball.y, size: 5, alpha: 255 });
       ball.dy *= -1;
       score++;
       document.getElementById('score').textContent = score;
@@ -147,9 +165,18 @@ function moveBall() {
   }
 
   if (ball.y > height + 30) {
-    gameOver = true;
-    document.getElementById('overlay').style.display = 'flex';
-    document.getElementById('message').textContent = "💀 Game Over";
+    lives--;
+    updateLivesDisplay();
+    if (lives > 0) {
+      ball.x = width / 2;
+      ball.y = height / 2;
+      ball.dx = 6;
+      ball.dy = -6;
+    } else {
+      gameOver = true;
+      document.getElementById('overlay').style.display = 'flex';
+      document.getElementById('message').innerHTML = "💀 Game Over<br>❤️ 0";
+    }
   }
 
   if (tiles.every(t => !t.alive)) {
@@ -163,6 +190,10 @@ function moveBall() {
   }
 }
 
+function updateLivesDisplay() {
+  document.getElementById('lives').textContent = '❤️ ' + lives;
+}
+
 function toggleAI() {
   aiMode = !aiMode;
 }
@@ -174,10 +205,12 @@ function togglePause() {
 function restartGame() {
   score = 0;
   level = 1;
+  lives = 3;
   paddle.w = 120;
   ball = { x: width / 2, y: height / 2, r: 10, dx: 6, dy: -6 };
   document.getElementById('score').textContent = score;
   document.getElementById('level').textContent = level;
+  updateLivesDisplay();
   generateLevel();
   loop();
 }
