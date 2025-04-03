@@ -1,14 +1,16 @@
 let tiles = [];
+let powerUps = [];
+let particles = [];
 let cols = 8;
 let rows = 4;
 let tileW, tileH = 30;
 let paddle, ball, score = 0, level = 1, aiMode = false;
 
 function setup() {
-  createCanvas(640, 720);
+  createCanvas(windowWidth, windowHeight - 90);
   tileW = width / cols;
   paddle = { w: 120, h: 12, y: height - 40 };
-  ball = { x: width / 2, y: height / 2, r: 10, dx: 5, dy: -5 };
+  ball = { x: width / 2, y: height / 2, r: 10, dx: 6, dy: -6 };
   generateLevel();
 }
 
@@ -22,8 +24,10 @@ function generateLevel() {
 }
 
 function draw() {
-  background(18);
+  background(10);
+  drawParticles();
   drawTiles();
+  drawPowerUps();
   drawPaddle();
   drawBall();
   moveBall();
@@ -50,6 +54,35 @@ function drawPaddle() {
 function drawBall() {
   fill(255);
   ellipse(ball.x, ball.y, ball.r * 2);
+  particles.push({ x: ball.x, y: ball.y, alpha: 255 });
+}
+
+function drawParticles() {
+  for (let p of particles) {
+    fill(179, 136, 255, p.alpha);
+    noStroke();
+    ellipse(p.x, p.y, 6);
+    p.alpha -= 5;
+  }
+  particles = particles.filter(p => p.alpha > 0);
+}
+
+function drawPowerUps() {
+  for (let p of powerUps) {
+    fill(0, 255, 255);
+    ellipse(p.x, p.y, 14);
+    p.y += 2;
+  }
+
+  let px = aiMode ? constrain(ball.x - paddle.w/2, 0, width - paddle.w)
+                  : constrain(mouseX - paddle.w/2, 0, width - paddle.w);
+  powerUps = powerUps.filter(p => {
+    if (p.y > paddle.y && p.x > px && p.x < px + paddle.w) {
+      paddle.w += 20;
+      return false;
+    }
+    return p.y < height;
+  });
 }
 
 function moveBall() {
@@ -61,21 +94,19 @@ function moveBall() {
 
   let px = aiMode ? constrain(ball.x - paddle.w/2, 0, width - paddle.w)
                   : constrain(mouseX - paddle.w/2, 0, width - paddle.w);
-  if (ball.y + ball.r >= paddle.y &&
-      ball.x > px &&
-      ball.x < px + paddle.w) {
+  if (ball.y + ball.r >= paddle.y && ball.x > px && ball.x < px + paddle.w) {
     let hitPoint = (ball.x - (px + paddle.w / 2)) / (paddle.w / 2);
-    ball.dx = 5 * hitPoint;
+    ball.dx = 6 * hitPoint;
     ball.dy = -abs(ball.dy);
   }
 
   for (let t of tiles) {
     if (t.alive &&
-        ball.x > t.x &&
-        ball.x < t.x + t.w &&
+        ball.x > t.x && ball.x < t.x + t.w &&
         ball.y - ball.r < t.y + t.h &&
         ball.y + ball.r > t.y) {
       t.alive = false;
+      if (random(1) < 0.1) powerUps.push({ x: ball.x, y: ball.y });
       ball.dy *= -1;
       score++;
       document.getElementById('score').textContent = score;

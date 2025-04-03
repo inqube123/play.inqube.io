@@ -1,15 +1,16 @@
 body {
   margin: 0;
   font-family: 'Space Grotesk', sans-serif;
-  background: #0d0d0d;
+  background: #0a0a0a;
   color: white;
   text-align: center;
+  overflow: hidden;
 }
-h1#title {
-  margin: 20px;
+#title {
   font-size: 2.5rem;
+  margin: 10px 0;
   color: #b388ff;
-  animation: glow 2s infinite alternate;
+  text-shadow: 0 0 15px #b388ff, 0 0 40px #9e9eff;
 }
 #hud {
   display: flex;
@@ -18,11 +19,12 @@ h1#title {
   align-items: center;
   margin-bottom: 10px;
 }
-#hud span {
-  background: #1e1e2f;
+.hud-block {
+  background: rgba(255, 255, 255, 0.05);
   padding: 6px 12px;
-  border-radius: 8px;
-  color: #fff;
+  border-radius: 10px;
+  border: 1px solid #b388ff;
+  box-shadow: 0 0 10px #9e9eff33;
 }
 button {
   background: #b388ff;
@@ -32,14 +34,14 @@ button {
   border-radius: 5px;
   cursor: pointer;
   font-weight: bold;
+  transition: 0.2s ease;
+}
+button:hover {
+  background: #9e9eff;
+  box-shadow: 0 0 10px #b388ff;
 }
 canvas {
   display: block;
   margin: auto;
-  border: 2px solid #b388ff;
   border-radius: 12px;
-}
-@keyframes glow {
-  0% { text-shadow: 0 0 5px #b388ff; }
-  100% { text-shadow: 0 0 15px #b388ff, 0 0 30px #9e9eff; }
 }
