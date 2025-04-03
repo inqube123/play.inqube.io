@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tile Blaster – Inqube Labs</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      background: #121212;
+      font-family: 'Space Grotesk', sans-serif;
+      color: white;
+      text-align: center;
+    }
+    canvas {
+      display: block;
+      margin: auto;
+      border: 2px solid #b388ff;
+    }
+    h1 {
+      margin: 20px 0 10px;
+      color: #b388ff;
+    }
+    #hud {
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+    button {
+      background: #b388ff;
+      border: none;
+      padding: 6px 12px;
+      font-family: 'Space Grotesk', sans-serif;
+      color: black;
+      font-weight: bold;
+      cursor: pointer;
+      margin-bottom: 15px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Tile Blaster – Inqube Labs</h1>
+  <div id="hud">Score: <span id="score">0</span> | Level: <span id="level">1</span></div>
+  <button onclick="toggleAI()">🤖 Toggle AI Paddle</button>
+  <script src="https://cdn.jsdelivr.net/npm/p5@1.6.0/lib/p5.min.js"></script>
+  <script>
+    let tiles = [];
+    let tileCols = 6;
+    let tileRows = 4;
+    let tileW, tileH = 30;
+    let paddle, ball, score = 0, level = 1, aiMode = false;
+
+    function setup() {
+      createCanvas(600, 700);
+      tileW = width / tileCols;
+      paddle = { w: 100, h: 15, y: height - 40 };
+      ball = { x: width/2, y: height/2, r: 10, dx: 5, dy: -5, color: 255 };
+      generateLevel();
+    }
+
+    function generateLevel() {
+      tiles = [];
+      for (let i = 0; i < tileCols; i++) {
+        for (let j = 0; j < tileRows + level - 1; j++) {
+          tiles.push({ x: i * tileW, y: j * tileH, w: tileW, h: tileH, alive: true });
+        }
+      }
+    }
+
+    function draw() {
+      background(18);
+      fill(ball.color); ellipse(ball.x, ball.y, ball.r*2);
+
+      // Paddle
+      let paddleX = aiMode ? constrain(ball.x - paddle.w/2, 0, width - paddle.w)
+                           : constrain(mouseX - paddle.w/2, 0, width - paddle.w);
+      fill('#b388ff'); rect(paddleX, paddle.y, paddle.w, paddle.h);
+
+      // Tiles
+      for (let t of tiles) {
+        if (t.alive) {
+          fill('#9575cd');
+          rect(t.x + 4, t.y + 4, t.w - 8, t.h - 8, 6);
+        }
+      }
+
+      // Ball motion
+      ball.x += ball.dx;
+      ball.y += ball.dy;
+      ball.color = 255;
+
+      // Bounce edges
+      if (ball.x < ball.r || ball.x > width - ball.r) ball.dx *= -1;
+      if (ball.y < ball.r) ball.dy *= -1;
+
+      // Bounce paddle
+      if (ball.y + ball.r >= paddle.y &&
+          ball.x > paddleX &&
+          ball.x < paddleX + paddle.w) {
+        ball.dy *= -1;
+        ball.y = paddle.y - ball.r;
+        ball.color = color('#b388ff');
+      }
+
+      // Tile collision
+      for (let t of tiles) {
+        if (t.alive &&
+            ball.x > t.x && ball.x < t.x + t.w &&
+            ball.y - ball.r < t.y + t.h &&
+            ball.y + ball.r > t.y) {
+          t.alive = false;
+          ball.dy *= -1;
+          ball.color = color('#ce93d8');
+          score++;
+          document.getElementById('score').textContent = score;
+        }
+      }
+
+      // Missed ball
+      if (ball.y > height + 30) {
+        noLoop();
+        fill('#ff4d4d');
+        textSize(32);
+        text('Game Over', width/2 - 80, height/2);
+      }
+
+      // Next level
+      if (tiles.every(t => !t.alive)) {
+        level++;
+        document.getElementById('level').textContent = level;
+        ball.x = width/2; ball.y = height/2;
+        ball.dx *= 1.05; ball.dy *= 1.05;
+        generateLevel();
+      }
+    }
+
+    function toggleAI() {
+      aiMode = !aiMode;
+    }
+  </script>
+</body>
+</html>
